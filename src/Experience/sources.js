@@ -15,12 +15,12 @@ export default [
     {
         name: 'galleryModel',
         type: 'gltfModel',
-        path: 'models/Gallery/Gallery.glb'
+        path: 'models/gallery/gallery.glb'
     },
     {
         name: 'characterModel',
         type: 'gltfModel',
-        path: 'models/Xbot/Xbot.glb'
+        path: 'models/xbot/xbot.glb'
     },
     {
         name: 'bakedTexture',
