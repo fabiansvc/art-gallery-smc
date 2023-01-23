@@ -8,16 +8,22 @@ export default class Character {
         this.experience = new Experience()
         this.scene = this.experience.scene
         this.resources = this.experience.resources
-        this.time = this.experience.time
-        this.turn = true
-        this.idle = false
+        this.time = this.experience.time       
 
-        // Resource
         this.resource = this.resources.items.characterModel
+        this.status = true
+
+        // Random
+        this.setRandoms()
+
+        // Model     
         this.setModel()
 
         // Animation
         this.setAnimation()
+
+        // Turns
+        this.setTurns()
     }
 
     setModel() {
@@ -27,6 +33,17 @@ export default class Character {
             this.characters[`character${index}`].position.set(0, 0.05, index + 8)
             this.scene.add(this.characters[`character${index}`])            
         }        
+    }
+
+    setRandoms(){
+        this.clients = {}
+
+        this.clients["1"] = {
+            "arrival": 5,
+            "wait": 5,
+            "entry": 10,
+            "exit": 6
+        }
     }
 
     setAnimation() {
@@ -60,23 +77,76 @@ export default class Character {
 
        
     }
+
+    setTurns(){
+        this.turns = {}
+        this.idle = {}
+        this.walking = {}
+        this.movement = {}
+
+        for (let index = 0; index < 16; index++) {
+            this.turns[`character${index}`] = false
+            this.idle[`character${index}`] = false
+            this.walking[`character${index}`] = false
+            this.movement[`character${index}`] = false
+        }  
+
+        this.turns[`character0`] = true
+        this.idle[`character0`] = false
+        this.walking[`character0`] = true
+        this.movement[`character0`] = false
+    }
+
     
-    turns(character){
-        if(this.turn)
-            this.animation.play(`idle-${character}`, `walking-${character}`)
-            this.turn = false        
+    turn(character, posZ){
+            if(this.walking[character]){
+                this.animation.play(`idle-${character}`, `walking-${character}`)
+                this.walking[character] = false    
+                this.movement[character] = true            
+            } 
 
-        if(this.characters[character].position.z > 4){
-            console.log(this.characters[character].position.z );
-            this.characters[character].position.z -= 0.02
-        }else{
-           this.idle = true            
-        }
+            if(this.movement[character]){
+                if(this.characters[character].position.z > posZ){                
+                    this.characters[character].position.z -= 0.02
+                }else{
+                    this.idle[character] = true    
+                    this.movement[character] = false        
+                }      
+            }               
 
-        if(this.idle){
-            console.log("entro");
-            this.animation.play(`walking-${character}`, `idle-${character}`)
-            this.idle = false
+            if(this.idle[character]){               
+                this.animation.play(`walking-${character}`, `idle-${character}`)
+                this.idle[character] = false
+                return true
+            }                   
+    }
+
+    star(){       
+            if(this.turns[`character0`]){
+                if(this.turn(`character0`, 4)){                     
+                    this.turns[`character0`] = false
+                    this.turns[`character1`] = true
+                    this.idle[`character1`] = false
+                    this.walking[`character1`] = true
+                    this.movement[`character1`] = false
+                    this.status = false
+                }
+            }   
+        
+    }
+
+    line(i){
+        for (let index = i; index < 16; index++) {            
+            if(this.turns[`character${index}`]){
+                if(this.turn(`character${index}`, index + 7)){ 
+                    this.turns[`character${index}`] = false
+                
+                    this.turns[`character${index+1}`] = true                
+                    this.idle[`character${index+1}`] = false
+                    this.walking[`character${index+1}`] = true
+                    this.movement[`character${index+1}`] = false
+                }
+            }               
         }
     }
 
@@ -85,7 +155,15 @@ export default class Character {
             this.animation.mixer[`character${index}`].update(this.time.delta * 0.001)
         }
 
-        this.turns(`character0`)      
+        if(this.status){
+            this.star()
+        }else{
+            this.line(1)
+        }
+
+        if(this.time.seconds === this.clients["1"].arrival){
+            console.log("ingreso");
+        }
     }
 
 }
