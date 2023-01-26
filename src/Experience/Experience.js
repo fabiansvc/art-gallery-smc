@@ -7,10 +7,7 @@ import Renderer from './Renderer.js'
 import World from './World/World.js'
 import Resources from './Utils/Resources.js'
 import sources from './sources.js'
-import Pyshics from './Pyshics.js'
 import KeyControls from './Utils/KeyControls.js'
-import Raycaster from './Raycasting.js'
-import Raycasting from './Raycasting.js'
 
 let instance = null
 
@@ -36,13 +33,11 @@ export default class Experience
         this.sizes = new Sizes()
         this.time = new Time()
         this.scene = new THREE.Scene()
-        this.pyshics = new Pyshics()
         this.resources = new Resources(sources)
         this.camera = new Camera()
         this.renderer = new Renderer()
         this.world = new World()
         this.keyControl = new KeyControls()
-        this.setRaycaster = new Raycasting()
 
         // Resize event
         this.sizes.on('resize', () =>
@@ -70,7 +65,6 @@ export default class Experience
         this.camera.update()
         this.world.update()
         this.renderer.update()
-        this.pyshics.update()
     }
 
     destroy()

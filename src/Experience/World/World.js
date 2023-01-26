@@ -23,7 +23,8 @@ export default class World
 
     update()
     {
-        if(this.character)
-            this.character.update()     
+        if(this.character){
+            this.character.update()              
+        }              
     }
 }
